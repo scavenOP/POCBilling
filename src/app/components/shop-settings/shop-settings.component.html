@@ -1,0 +1,148 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h2>Shop Settings</h2>
+    <p>Configure your shop details and billing preferences</p>
+  </div>
+
+  <form class="settings-form" (ngSubmit)="saveSettings()">
+    <div class="form-section">
+      <h3>Basic Information</h3>
+      
+      <div class="form-group">
+        <label for="shopName">Shop Name *</label>
+        <input 
+          type="text" 
+          id="shopName" 
+          [(ngModel)]="settings.shopName" 
+          name="shopName" 
+          required
+          placeholder="Enter your shop name">
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address *</label>
+        <textarea 
+          id="address" 
+          [(ngModel)]="settings.address" 
+          name="address" 
+          required
+          rows="3"
+          placeholder="Enter complete address"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            [(ngModel)]="settings.phone" 
+            name="phone" 
+            required
+            placeholder="Enter phone number">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            [(ngModel)]="settings.email" 
+            name="email"
+            placeholder="Enter email address">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="gstin">GSTIN *</label>
+        <input 
+          type="text" 
+          id="gstin" 
+          [(ngModel)]="settings.gstin" 
+          name="gstin" 
+          required
+          placeholder="Enter GSTIN number"
+          maxlength="15">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Payment Information</h3>
+      
+      <div class="form-group">
+        <label for="upiId">UPI ID</label>
+        <input 
+          type="text" 
+          id="upiId" 
+          [(ngModel)]="settings.upiId" 
+          name="upiId"
+          placeholder="Enter UPI ID for payments">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Logo & Branding</h3>
+      
+      <div class="form-group">
+        <label for="logo">Shop Logo</label>
+        <input 
+          type="file" 
+          id="logo" 
+          accept="image/*"
+          (change)="onLogoChange($event)">
+        <small>Upload your shop logo (JPG, PNG, GIF)</small>
+        
+        <div *ngIf="settings.logo" class="logo-preview">
+          <img [src]="settings.logo" alt="Shop Logo" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Bill Display Options</h3>
+      
+      <div class="form-group">
+        <label for="billFormat">Bill Format</label>
+        <select 
+          id="billFormat" 
+          [(ngModel)]="settings.billFormat" 
+          name="billFormat">
+          <option value="standard">Standard Format</option>
+          <option value="compact">Compact Format</option>
+          <option value="detailed">Detailed Format</option>
+          <option value="minimal">Minimal Format</option>
+        </select>
+        <small>Choose the bill format that suits your business needs</small>
+      </div>
+      
+      <div class="checkbox-group">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.showLogoOnBill" 
+            name="showLogoOnBill">
+          <span class="checkmark"></span>
+          Show logo on bill
+        </label>
+
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.showUpiOnBill" 
+            name="showUpiOnBill">
+          <span class="checkmark"></span>
+          Show UPI QR code on bill
+        </label>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="resetSettings()">
+        Reset
+      </button>
+      <button type="submit" class="btn btn-primary">
+        Save Settings
+      </button>
+    </div>
+  </form>
+</div>

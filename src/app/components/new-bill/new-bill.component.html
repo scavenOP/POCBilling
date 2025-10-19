@@ -1,0 +1,201 @@
+<div class="billing-container">
+  <div class="billing-header">
+    <h2>New Bill</h2>
+    <p>Create professional invoices with GST calculations</p>
+  </div>
+
+  <div class="billing-content">
+    <!-- Customer Information -->
+    <div class="customer-section">
+      <h3>Customer Information <span class="required">*</span></h3>
+      <div class="customer-form">
+        <div class="form-group">
+          <label for="customerName">Customer Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="customerName" 
+            [(ngModel)]="customerName" 
+            (input)="onCustomerNameChange()"
+            placeholder="Enter customer name"
+            [class.error]="validationErrors.customerName"
+            required>
+          <div *ngIf="validationErrors.customerName" class="error-message">
+            {{validationErrors.customerName}}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="customerPhone">Phone Number <span class="required">*</span></label>
+          <input 
+            type="tel" 
+            id="customerPhone" 
+            [(ngModel)]="customerPhone" 
+            (input)="onCustomerPhoneChange()"
+            placeholder="Enter 10-digit mobile number"
+            [class.error]="validationErrors.customerPhone"
+            maxlength="10"
+            required>
+          <div *ngIf="validationErrors.customerPhone" class="error-message">
+            {{validationErrors.customerPhone}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Items Section -->
+    <div class="add-item-section">
+      <h3>Add Items</h3>
+      <div class="item-form">
+        <div class="form-group">
+          <label for="product">Select Product <span class="required">*</span></label>
+          <select 
+            id="product" 
+            [(ngModel)]="selectedProduct" 
+            (change)="onProductChange()"
+            class="product-select"
+            [class.error]="validationErrors.product">
+            <option [ngValue]="null">Choose a product...</option>
+            <option 
+              *ngFor="let product of products" 
+              [ngValue]="product">
+              {{product.name}} - ₹{{product.price.toLocaleString('en-IN')}} ({{product.category}})
+            </option>
+          </select>
+          <div *ngIf="validationErrors.product" class="error-message">
+            {{validationErrors.product}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Quantity <span class="required">*</span></label>
+          <input 
+            type="number" 
+            id="quantity" 
+            [(ngModel)]="quantity" 
+            (input)="onQuantityChange()"
+            min="1" 
+            class="quantity-input"
+            [class.error]="validationErrors.quantity">
+          <div *ngIf="validationErrors.quantity" class="error-message">
+            {{validationErrors.quantity}}
+          </div>
+        </div>
+
+        <button 
+          type="button" 
+          class="btn btn-add" 
+          (click)="addItem()">
+          Add Item
+        </button>
+      </div>
+
+      <!-- Product Details -->
+      <div *ngIf="selectedProduct" class="product-details">
+        <div class="detail-item">
+          <span class="label">HSN Code:</span>
+          <span class="value">{{selectedProduct.hsnCode}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">GST Rate:</span>
+          <span class="value">{{selectedProduct.gstRate}}%</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Category:</span>
+          <span class="value">{{selectedProduct.category}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bill Items Table -->
+    <div class="bill-items-section" *ngIf="billItems.length > 0">
+      <h3>Bill Items</h3>
+      <div class="table-container">
+        <table class="bill-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Product</th>
+              <th>HSN</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Taxable Value</th>
+              <th>CGST</th>
+              <th>SGST</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of billItems; let i = index">
+              <td>{{i + 1}}</td>
+              <td>{{item.product.name}}</td>
+              <td>{{item.product.hsnCode}}</td>
+              <td>{{item.quantity}}</td>
+              <td>₹{{item.product.price.toLocaleString('en-IN')}}</td>
+              <td>₹{{item.taxableValue.toFixed(2)}}</td>
+              <td>₹{{item.cgst.toFixed(2)}}</td>
+              <td>₹{{item.sgst.toFixed(2)}}</td>
+              <td>₹{{item.total.toFixed(2)}}</td>
+              <td>
+                <button 
+                  type="button" 
+                  class="btn btn-remove" 
+                  (click)="removeItem(i)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bill Summary -->
+      <div class="bill-summary">
+        <div class="summary-row">
+          <span class="label">Subtotal:</span>
+          <span class="value">₹{{subtotal.toFixed(2)}}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Total CGST:</span>
+          <span class="value">₹{{totalCgst.toFixed(2)}}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Total SGST:</span>
+          <span class="value">₹{{totalSgst.toFixed(2)}}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span class="label">Grand Total:</span>
+          <span class="value">₹{{grandTotal.toFixed(2)}}</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="bill-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="clearBill()">
+          Clear Bill
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-info" 
+          (click)="previewBill()">
+          Preview Bill
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="saveBill()">
+          Save & Print Bill
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="billItems.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No items added yet</h3>
+      <p>Select a product and add it to start creating your bill</p>
+    </div>
+  </div>
+</div>
